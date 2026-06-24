@@ -1,69 +1,154 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-  const revealElements = document.querySelectorAll(
-    ".spotlight, .portal-card, .species-card, .topic-circle, .quote-section"
+  // Loader
+  const loader = document.getElementById("loader");
+
+  setTimeout(() => {
+    if(loader){
+      loader.style.opacity = "0";
+      loader.style.visibility = "hidden";
+    }
+  }, 1800);
+
+  // Particles
+  const particleContainer = document.querySelector(".particles");
+
+  if(particleContainer){
+
+    for(let i=0;i<80;i++){
+
+      const particle = document.createElement("span");
+
+      particle.classList.add("particle");
+
+      particle.style.left = Math.random()*100 + "%";
+      particle.style.top = Math.random()*100 + "%";
+
+      particle.style.opacity = Math.random();
+
+      particle.style.animation =
+      `floatParticle ${10 + Math.random()*20}s linear infinite`;
+
+      particleContainer.appendChild(particle);
+    }
+  }
+
+  // Reveal on scroll
+  const reveals = document.querySelectorAll(
+    ".planet,.expedition-card,.species-card,.spotlight-content,.spotlight-image,.section-title"
   );
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
+  const observer = new IntersectionObserver((entries)=>{
+
+    entries.forEach(entry=>{
+
       if(entry.isIntersecting){
+
         entry.target.style.opacity = "1";
         entry.target.style.transform = "translateY(0px)";
-      }
-    });
-  }, { threshold: 0.15 });
 
-  revealElements.forEach(el => {
-    el.style.opacity = "0";
-    el.style.transform = "translateY(40px)";
-    el.style.transition = "all 0.9s ease";
-    observer.observe(el);
+      }
+
+    });
+
+  },{
+    threshold:0.15
   });
 
-  const dna = document.querySelector(".dna-hero");
-  const jelly = document.querySelector(".floating-jellyfish");
+  reveals.forEach(el=>{
 
-  document.addEventListener("mousemove", (e) => {
+    el.style.opacity = "0";
+    el.style.transform = "translateY(60px)";
+    el.style.transition = "all .9s ease";
 
-    const x = (window.innerWidth / 2 - e.clientX) / 50;
-    const y = (window.innerHeight / 2 - e.clientY) / 50;
+    observer.observe(el);
+
+  });
+
+  // Mouse parallax
+  const dna = document.querySelector(".hero-dna");
+  const jelly = document.querySelector(".hero-jellyfish");
+
+  document.addEventListener("mousemove",(e)=>{
+
+    const x =
+    (window.innerWidth/2 - e.clientX)/40;
+
+    const y =
+    (window.innerHeight/2 - e.clientY)/40;
 
     if(dna){
+
       dna.style.transform =
-      `translate(${x}px, ${y}px)`;
+      `translate(${x}px,${y}px)`;
+
     }
 
     if(jelly){
+
       jelly.style.transform =
-      `translate(${x * -1.5}px, ${y * -1.5}px)`;
+      `translate(${-x}px,${-y}px)`;
+
     }
 
   });
 
-  document.querySelectorAll(".species-card").forEach(card => {
+  // Navbar effect
+  const navbar = document.querySelector(".navbar");
 
-    card.addEventListener("mousemove", (e) => {
+  window.addEventListener("scroll",()=>{
 
-      const rect = card.getBoundingClientRect();
+    if(window.scrollY > 100){
 
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
+      navbar.style.background =
+      "rgba(2,17,20,.85)";
+
+      navbar.style.boxShadow =
+      "0 0 30px rgba(55,255,215,.15)";
+
+    }
+    else{
+
+      navbar.style.background =
+      "rgba(255,255,255,.05)";
+
+      navbar.style.boxShadow = "none";
+
+    }
+
+  });
+
+  // 3D card tilt
+  document.querySelectorAll(
+    ".expedition-card,.species-card"
+  ).forEach(card=>{
+
+    card.addEventListener("mousemove",(e)=>{
+
+      const rect =
+      card.getBoundingClientRect();
+
+      const x =
+      e.clientX - rect.left;
+
+      const y =
+      e.clientY - rect.top;
 
       const rotateY =
-      ((x / rect.width) - 0.5) * 18;
+      ((x / rect.width)-0.5)*18;
 
       const rotateX =
-      ((y / rect.height) - 0.5) * -18;
+      ((y / rect.height)-0.5)*-18;
 
       card.style.transform =
       `perspective(1000px)
-       rotateX(${rotateX}deg)
-       rotateY(${rotateY}deg)
-       scale(1.04)`;
+      rotateX(${rotateX}deg)
+      rotateY(${rotateY}deg)
+      scale(1.03)`;
 
     });
 
-    card.addEventListener("mouseleave", () => {
+    card.addEventListener("mouseleave",()=>{
 
       card.style.transform =
       "perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)";
@@ -72,100 +157,55 @@ document.addEventListener("DOMContentLoaded", () => {
 
   });
 
-  const particleContainer =
-  document.querySelector(".particles");
+  // Smooth scrolling
+  document.querySelectorAll('a[href^="#"]').forEach(anchor=>{
 
-  if(particleContainer){
+    anchor.addEventListener("click",function(e){
 
-    for(let i = 0; i < 60; i++){
+      e.preventDefault();
 
-      const particle =
-      document.createElement("span");
+      const target =
+      document.querySelector(
+      this.getAttribute("href"));
 
-      particle.classList.add("particle");
+      if(target){
 
-      particle.style.left =
-      Math.random() * 100 + "%";
+        target.scrollIntoView({
+          behavior:"smooth"
+        });
 
-      particle.style.top =
-      Math.random() * 100 + "%";
+      }
 
-      particle.style.animationDuration =
-      (8 + Math.random() * 12) + "s";
-
-      particle.style.animationDelay =
-      Math.random() * 5 + "s";
-
-      particleContainer.appendChild(particle);
-
-    }
-
-  }
-
-  const navbar =
-  document.querySelector(".navbar");
-
-  window.addEventListener("scroll", () => {
-
-    if(window.scrollY > 50){
-
-      navbar.style.boxShadow =
-      "0 0 35px rgba(55,255,215,0.18)";
-
-      navbar.style.background =
-      "rgba(7,38,44,0.85)";
-
-    }
-    else{
-
-      navbar.style.boxShadow = "none";
-
-      navbar.style.background =
-      "rgba(255,255,255,0.08)";
-
-    }
+    });
 
   });
 
 });
 
-const style = document.createElement("style");
+// Dynamic animation styles
+const animationStyle =
+document.createElement("style");
 
-style.innerHTML = `
+animationStyle.innerHTML = `
 
-.particles{
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  overflow:hidden;
-  z-index:-1;
-}
+@keyframes floatParticle{
 
-.particle{
-  position:absolute;
-  width:4px;
-  height:4px;
-  border-radius:50%;
-  background:rgba(87,215,255,.8);
-  box-shadow:0 0 10px rgba(87,215,255,.8);
-  animation:particleFloat linear infinite;
-}
-
-@keyframes particleFloat{
-  from{
-    transform:translateY(0px);
-    opacity:.2;
-  }
-
-  50%{
-    opacity:1;
-  }
-
-  to{
-    transform:translateY(-150px);
+  0%{
+    transform: translateY(0px);
     opacity:0;
   }
+
+  30%{
+    opacity:.8;
+  }
+
+  100%{
+    transform: translateY(-250px);
+    opacity:0;
+  }
+
 }
+
 `;
 
-document.head.appendChild(style);
+document.head.appendChild(animationStyle);
